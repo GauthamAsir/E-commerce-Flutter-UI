@@ -1,61 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/login/login_screen.dart';
+import 'package:get/get.dart';
+import 'package:shop_app/components/default_button.dart';
+import 'package:shop_app/screens/auth/login/login_screen.dart';
+import 'package:shop_app/screens/splash/components/splash_content.dart';
+import 'package:shop_app/screens/splash/splash_controller.dart';
 import 'package:shop_app/utils/constants.dart';
 import 'package:shop_app/utils/size_config.dart';
-import 'package:shop_app/utils/strings.dart';
 
-import '../../../components/default_button.dart';
+class SplashBody extends GetView<SplashController> {
+  final PageController pageController = PageController();
 
-// This is the best practice
-import '../components/splash_content.dart';
-
-class SplashBody extends StatefulWidget {
-  @override
-  _SplashBodyState createState() => _SplashBodyState();
-}
-
-class _SplashBodyState extends State<SplashBody> {
-  int currentPage = 0;
-  PageController pageController = PageController();
-  List<Map<String, String>> splashData = [
-    {
-      "text": "Welcome to $appNameString, Let’s shop!",
-      "image": "assets/images/splash_1.png"
-    },
-    {
-      "text": "We help people connect with store \naround all States in India",
-      "image": "assets/images/splash_2.png"
-    },
-    {
-      "text": "We show the easy way to shop. \nJust stay at home with us",
-      "image": "assets/images/splash_3.png"
-    },
-  ];
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SizedBox(
         width: double.infinity,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: PageView.builder(
-                controller: pageController,
-                onPageChanged: (value) {
-                  if (mounted) {
-                    setState(() {
-                      currentPage = value;
-                    });
-                  }
-                },
-                itemCount: splashData.length,
-                itemBuilder: (context, index) => SplashContent(
-                  image: splashData[index]["image"],
-                  text: splashData[index]['text'],
-                ),
-              ),
+        child: Obx(() => Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  child: PageView.builder(
+                    controller: pageController,
+                    onPageChanged: (value) {
+                      controller.currentPage.value = value;
+                    },
+                    itemCount: controller.splashData.length,
+                    itemBuilder: (context, index) => SplashContent(
+                      image: controller.splashData[index]["image"],
+                      text: controller.splashData[index]['text'],
+                    ),
+                  ),
             ),
             Expanded(
               flex: 2,
@@ -68,41 +41,45 @@ class _SplashBodyState extends State<SplashBody> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        splashData.length,
-                        (index) => AnimatedContainer(
-                          duration: kAnimationDuration,
-                          margin: EdgeInsets.only(right: 5),
-                          height: 6,
-                          width: currentPage == index ? 20 : 6,
-                          decoration: BoxDecoration(
-                            color: currentPage == index
-                                ? kPrimaryColor
-                                : Color(0xFFD8D8D8),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
+                            controller.splashData.length,
+                            (index) => AnimatedContainer(
+                              duration: kAnimationDuration,
+                              margin: EdgeInsets.only(right: 5),
+                              height: 6,
+                              width: controller.currentPage.value == index
+                                  ? 20
+                                  : 6,
+                              decoration: BoxDecoration(
+                                color: controller.currentPage.value == index
+                                    ? kPrimaryColor
+                                    : Color(0xFFD8D8D8),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
                       ),
                     ),
                     Spacer(flex: 3),
                     DefaultButton(
                       text: "Continue",
                       press: () {
-                        if (currentPage == splashData.length - 1) {
-                          Navigator.pushNamed(context, LoginScreen.routeName);
-                          return;
-                        }
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 250),
-                            curve: Curves.easeIn);
-                      },
+                        if (controller.currentPage.value ==
+                                controller.splashData.length - 1) {
+                              Navigator.pushNamed(
+                                  context, LoginScreen.routeName);
+                              return;
+                            }
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeIn);
+                          },
+                        ),
+                        Spacer(),
+                      ],
                     ),
-                    Spacer(),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ),
+              ],
+            )),
       ),
     );
   }

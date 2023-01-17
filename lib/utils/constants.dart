@@ -50,3 +50,11 @@ OutlineInputBorder outlineInputBorder() {
     borderSide: BorderSide(color: kTextColor),
   );
 }
+
+Uri getUrl(List params) {
+  return Uri(
+      scheme: 'https',
+      host: '192.168.31.19',
+      path: '/api/${params.join('/')}',
+      port: 4040);
+}

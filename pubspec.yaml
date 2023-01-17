@@ -26,19 +26,19 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.5
+  cupertino_icons:
 
   # help us to use SVG in our app
-  flutter_svg: ^1.1.6
+  flutter_svg:
 
-  # for State management
-  provider: ^6.0.5
-
-  #
+  # Api access
   http:
 
   # State Management
   get:
+
+  # Storage
+  get_storage:
 
 dev_dependencies:
   flutter_test:

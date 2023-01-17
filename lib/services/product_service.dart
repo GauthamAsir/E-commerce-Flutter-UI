@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop_app/models/Product.dart';
+import 'package:shop_app/utils/constants.dart';
 
 class ProductService extends GetxService {
   List<Product> productsList = [];
@@ -20,7 +21,6 @@ class ProductService extends GetxService {
   }
 
   Future<void> fetchAllProducts() async {
-    print(getUrl(['product']));
     var response =
         await http.get(getUrl(['Product'])).timeout(Duration(seconds: 5));
     if (response.statusCode == 200) {
@@ -33,13 +33,5 @@ class ProductService extends GetxService {
     if (kDebugMode) {
       print(response.body);
     }
-  }
-
-  Uri getUrl(List params) {
-    return Uri(
-        scheme: 'https',
-        host: '192.168.31.19',
-        path: '/api/${params.join('/')}',
-        port: 4040);
   }
 }
