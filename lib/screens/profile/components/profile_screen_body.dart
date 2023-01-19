@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shop_app/screens/auth/login/login_screen.dart';
+import 'package:shop_app/utils/constants.dart';
 
 import 'profile_menu.dart';
 import 'profile_pic.dart';
@@ -35,7 +38,10 @@ class ProfileScreenBody extends StatelessWidget {
           ProfileMenu(
             text: "Log Out",
             icon: "assets/icons/Log out.svg",
-            press: () {},
+            press: () {
+              clearDataFromBox();
+              Get.offNamedUntil(LoginScreen.routeName, (route) => false);
+            },
           ),
         ],
       ),

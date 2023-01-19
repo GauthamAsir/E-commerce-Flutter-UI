@@ -53,7 +53,7 @@ class _ProductImagesState extends State<ProductImages> {
         });
       },
       child: AnimatedContainer(
-        duration: defaultDuration,
+        duration: kDefaultAnimDuration,
         margin: EdgeInsets.only(right: 15),
         padding: EdgeInsets.all(8),
         height: getProportionateScreenWidth(48),

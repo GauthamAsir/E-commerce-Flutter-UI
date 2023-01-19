@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shop_app/components/custom_suffix_icon.dart';
 import 'package:shop_app/components/default_button.dart';
 import 'package:shop_app/components/form_error.dart';
-import 'package:shop_app/screens/otp/otp_screen.dart';
+import 'package:shop_app/providers/auth_provider.dart';
+import 'package:shop_app/screens/home/home_screen.dart';
 
 import '../../../utils/constants.dart';
 import '../../../utils/size_config.dart';
@@ -19,6 +22,10 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
   String? lastName;
   String? phoneNumber;
   String? address;
+  DateTime? dob;
+  final args = Get.arguments;
+
+  final AuthProvider authProvider = AuthProvider();
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -34,6 +41,19 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       });
   }
 
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: dob ?? DateTime(DateTime.now().year - 18),
+        firstDate: DateTime(DateTime.now().year - 100),
+        lastDate: DateTime(DateTime.now().year - 18));
+    if (picked != null && picked != dob) {
+      setState(() {
+        dob = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -46,18 +66,53 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPhoneNumberFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildAddressFormField(),
+          datePicker(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          // buildAddressFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(40)),
           DefaultButton(
-            text: "continue",
-            press: () {
+            text: "SignUp",
+            press: () async {
               if (_formKey.currentState!.validate()) {
-                Navigator.pushNamed(context, OtpScreen.routeName);
+                _formKey.currentState!.save();
+                var res = await authProvider.signUp(
+                    args['email'],
+                    args['password'],
+                    phoneNumber!,
+                    firstName!,
+                    lastName!,
+                    dob ?? DateTime(2000));
+                print(res['custId']);
+                if (res['status']) {
+                  saveDataToBox(kCurrentUserId, args['email']);
+                  saveDataToBox(kCurrentUserId, res['custId'] as int);
+                  print(getIntFromBox(kCurrentUserId).toString());
+                  authProvider.currentUserId = res['custId'];
+                  authProvider.getCurrentUser();
+                  Get.offNamedUntil(HomeScreen.routeName, (route) => false);
+                } else {
+                  getSnack('Failed', 'Invalid Details');
+                }
+
+                // Navigator.pushNamed(context, OtpScreen.routeName);
               }
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget datePicker() {
+    return SizedBox(
+      height: 80,
+      child: CupertinoDatePicker(
+        mode: CupertinoDatePickerMode.date,
+        initialDateTime: dob ?? DateTime(DateTime.now().year - 18),
+        onDateTimeChanged: (DateTime newDateTime) {
+          dob = newDateTime;
+        },
       ),
     );
   }
@@ -85,7 +140,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon:
-            CustomSuffixIcon(svgIcon: "assets/icons/Location point.svg"),
+        CustomSuffixIcon(svgIcon: "assets/icons/Location point.svg"),
       ),
     );
   }
@@ -97,12 +152,17 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPhoneNumberNullError);
+        } else if (value.length == 10) {
+          removeError(error: kInvalidPhoneNoError);
         }
         return null;
       },
       validator: (value) {
         if (value!.isEmpty) {
           addError(error: kPhoneNumberNullError);
+          return "";
+        } else if (value.length != 10) {
+          addError(error: kInvalidPhoneNoError);
           return "";
         }
         return null;
@@ -137,13 +197,13 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       onSaved: (newValue) => firstName = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
-          removeError(error: kNamelNullError);
+          removeError(error: kNameNullError);
         }
         return null;
       },
       validator: (value) {
         if (value!.isEmpty) {
-          addError(error: kNamelNullError);
+          addError(error: kNameNullError);
           return "";
         }
         return null;

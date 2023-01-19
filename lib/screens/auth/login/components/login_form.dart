@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:shop_app/components/custom_suffix_icon.dart';
 import 'package:shop_app/components/default_button.dart';
 import 'package:shop_app/components/form_error.dart';
@@ -86,17 +85,16 @@ class _SignFormState extends State<SignForm> {
                 KeyboardUtil.hideKeyboard(context);
 
                 var res = await authProvider.login(email!, password!);
-
+                print(res['customerId']);
                 if (res['status']) {
+                  saveDataToBox(kCurrentUserId, email);
+                  saveDataToBox(kCurrentUserId, res['customerId'] as int);
+                  print(getIntFromBox(kCurrentUserId).toString());
+                  authProvider.currentUserId = res['customerId'];
+                  authProvider.getCurrentUser();
                   Navigator.pushNamed(context, LoginSuccessScreen.routeName);
                 } else {
-                  Get.snackbar(
-                    'Failed',
-                    'Incorrect credentials',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.black26,
-                    margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  );
+                  getSnack('Failed', 'Incorrect Email or Password');
                 }
 
                 // Navigator.pushNamed(context, LoginSuccessScreen.routeName);

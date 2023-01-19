@@ -1,12 +1,29 @@
 import 'package:get/get.dart';
-import 'package:shop_app/utils/strings.dart';
+import 'package:shop_app/utils/constants.dart';
 
 class SplashController extends GetxController {
   RxInt currentPage = 0.obs;
 
+  RxBool? loggedIn;
+
+  @override
+  void onInit() {
+    isLoggedIn();
+    super.onInit();
+  }
+
+  Future<void> isLoggedIn() async {
+    int? id = getIntFromBox(kCurrentUserId);
+
+    // await Future.delayed(const Duration(seconds: 1), () {});
+
+    loggedIn = (id != null).obs;
+    print(loggedIn!.value);
+  }
+
   RxList<Map<String, String>> splashData = [
     {
-      "text": "Welcome to $appNameString, Let’s shop!",
+      "text": "Welcome to $kAppName, Let’s shop!",
       "image": "assets/images/splash_1.png"
     },
     {

@@ -27,6 +27,17 @@ class UserDetail {
         email: data['Email']);
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'Username': userName,
+      'FirstName': firstName,
+      'LastName': lastName,
+      'DateOfBirth': dateOfBirth.toString(),
+      'ContactNo': phoneNo,
+      'Email': email,
+    };
+  }
+
   String toJson([UserDetail? data]) {
     if (data != null) {
       return _toJson(data);
@@ -44,5 +55,17 @@ class UserDetail {
       'ContactNo': userDetail.phoneNo,
       'Email': userDetail.email,
     });
+  }
+
+  @override
+  String toString() {
+    return {
+      'Username': userName,
+      'FirstName': firstName,
+      'LastName': lastName,
+      'DateOfBirth': dateOfBirth,
+      'ContactNo': phoneNo,
+      'Email': email,
+    }.toString();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/utils/constants.dart';
 import 'package:shop_app/utils/size_config.dart';
-import 'package:shop_app/utils/strings.dart';
 
 class SplashContent extends StatelessWidget {
   const SplashContent({
@@ -17,7 +16,7 @@ class SplashContent extends StatelessWidget {
       children: <Widget>[
         Spacer(),
         Text(
-          "$appNameString",
+          "$kAppName",
           style: TextStyle(
             fontSize: getProportionateScreenWidth(36),
             color: kPrimaryColor,

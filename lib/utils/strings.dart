@@ -1,1 +1,0 @@
-const appNameString = 'E-Commerce';

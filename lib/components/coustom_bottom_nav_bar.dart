@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shop_app/providers/auth_provider.dart';
 import 'package:shop_app/screens/home/home_screen.dart';
 import 'package:shop_app/screens/profile/profile_screen.dart';
 
@@ -7,12 +8,13 @@ import '../utils/constants.dart';
 import '../utils/enums.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
-  const CustomBottomNavBar({
+  CustomBottomNavBar({
     Key? key,
     required this.selectedMenu,
   }) : super(key: key);
 
   final MenuState selectedMenu;
+  final AuthProvider authProvider = AuthProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,9 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
-                onPressed: () {},
+                onPressed: () {
+                  authProvider.getCurrentUser();
+                },
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
